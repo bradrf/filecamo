@@ -1,0 +1,13 @@
+Gem::Specification.new do |s|
+  s.name        = 'filecamo'
+  s.version     = '0.0.1'
+  s.date        = '2015-11-07'
+  s.summary     = 'File content generator and manipulator.'
+  s.description = 'Generate and manipulate entire directory trees of either binary or text file content.'
+  s.authors     = ['Brad Robel-Forrest']
+  s.email       = 'brad@bitpony.com'
+  s.files       = ['lib/']
+  s.homepage    = 'https://github.com/bradrf/better_bytes#readme'
+  s.license     = 'MIT'
+  s.add_runtime_dependency 'better_bytes', '>= 0.0.1'
+end
