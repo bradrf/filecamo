@@ -1,12 +1,11 @@
 Gem::Specification.new do |s|
   s.name        = 'filecamo'
-  s.version     = '0.0.1'
-  s.date        = '2015-11-07'
+  s.version     = File.readlines('lib/filecamo.rb').grep(/VERSION/){|v|v.match(/'([^']+)'/)[1]}[0]
   s.summary     = 'File content generator and manipulator.'
   s.description = 'Generate and manipulate entire directory trees of either binary or text file content.'
   s.authors     = ['Brad Robel-Forrest']
   s.email       = 'brad@bitpony.com'
-  s.files       = ['lib/']
+  s.files         = `git ls-files -z`.split("\x0")
   s.executables = ['filecamo']
   s.homepage    = 'https://github.com/bradrf/filecamo#readme'
   s.license     = 'MIT'

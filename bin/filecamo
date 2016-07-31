@@ -53,7 +53,7 @@ elsif cmd == 'muck'
   if ARGV.size < 3
     $stderr.puts <<EOF
 
-usage: #{BN} <percent_select> <percent_change> <path> [<path>...]
+usage: #{BN} muck <percent_select> <percent_change> <path> [<path>...]
 
      The percent select should be a value from 1 to 100 indicating how likely a given file will be
      modified.
