@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    filecamo (0.0.1)
+      better_bytes (~> 0.0.1)
+      literate_randomizer (~> 0.4.0)
+      ruby-filemagic (~> 0.7.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    better_bytes (0.0.1)
+    literate_randomizer (0.4.0)
+    ruby-filemagic (0.7.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  filecamo!
+
+BUNDLED WITH
+   1.12.5

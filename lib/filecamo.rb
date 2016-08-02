@@ -1,5 +1,5 @@
 module Filecamo
-  VERSION = '0.0.1'
+  VERSION = '0.0.2'
 end
 
 require_relative './filecamo/generator'

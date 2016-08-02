@@ -3,6 +3,10 @@
 require_relative '../lib/filecamo'
 
 BN = File.basename($0, '.rb')
+usage = "usage: ${BN} [--debug]"
+
+logger = Logger.new($stdout)
+logger.level = ARGV.delete('--debug') ? Logger::DEBUG : Logger::INFO
 
 cmd = ARGV.shift
 if cmd == 'gen'
@@ -17,7 +21,7 @@ if cmd == 'gen'
     
     $stderr.puts <<EOF
 
-usage: #{BN} gen [-d <destination_path>] <minimum_size> <maximum_size> <count> <depth> [<percent_text>]
+#{usage} gen [-d <destination_path>] <minimum_size> <maximum_size> <count> <depth> [<percent_text>]
 
      The size MAY end with a unit label:
        * BINARY labels (#{bm} multiplier):  #{bin.join(', ')}
@@ -36,24 +40,27 @@ EOF
   end
 
   min, max, count, depth, percent_text = ARGV
-  generator = Filecamo::Generator.new
+  generator = Filecamo::Generator.new(logger: logger)
   generator.generate(min, max, count, depth,
                      percent_text: percent_text, destination_path: dst_path) do |path, len|
     puts "#{BetterBytes.humanize(len, precision: 6.1)} => #{path}"
   end
+  msg_len = 0
   generator.wait do |txt_count, bin_count|
-    $stdout.printf "\rWaiting for #{txt_count} txt and #{bin_count} bin jobs "\
-                   "to complete..." + (' '*10)
+    msg = "\rWaiting for #{txt_count} txt and #{bin_count} bin jobs to complete..."
+    $stdout.printf(msg + (' ' * msg_len))
     $stdout.flush
+    msg_len = msg.size
   end
-  $stdout.puts
+  $stdout.printf("\r" + (' ' * msg_len) + "\r")
   generator.kill
+  puts generator.stats
 
 elsif cmd == 'muck'
   if ARGV.size < 3
     $stderr.puts <<EOF
 
-usage: #{BN} muck <percent_select> <percent_change> <path> [<path>...]
+#{usage} muck <percent_select> <percent_change> <path> [<path>...]
 
      The percent select should be a value from 1 to 100 indicating how likely a given file will be
      modified.
@@ -69,15 +76,16 @@ EOF
   end
 
   percent_select, percent_change, *paths = ARGV
-  mucker = Filecamo::TextMucker.new(" #{BN}: ")
+  mucker = Filecamo::TextMucker.new(" #{BN}: ", logger: logger)
   mucker.muck(percent_select, percent_change, paths) do |fn, lang, line_nums|
     puts "Modified #{fn} (#{lang}): #{line_nums.join(',')}"
   end
+  puts mucker.stats
 
 else
   $stderr.puts <<EOF
 
-usage: #{BN} { gen | muck } ...
+#{usage} { gen | muck } ...
 
 EOF
   exit 1

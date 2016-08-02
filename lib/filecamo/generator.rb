@@ -13,6 +13,7 @@ module Filecamo
       @gen = Random.new
       @logger = logger
       @words_generated = {}
+      @stats = {txt: 0, bin: 0}
 
       @txt_work_q = SizedQueue.new(txt_workers[:queue_size])
       @txt_workers = start_workers(:txt, @txt_work_q, txt_workers[:count]) do |file, len|
@@ -21,6 +22,7 @@ module Filecamo
           line.slice!(len..-1)
           len -= file.write(line)
         end
+        @stats[:txt] += 1
       end
 
       @bin_work_q = SizedQueue.new(bin_workers[:queue_size])
@@ -28,8 +30,11 @@ module Filecamo
         while len > 0
           len -= file.write(@gen.bytes(len < 32768 ? len : 32768))
         end
+        @stats[:bin] += 1
       end
     end
+
+    attr_reader :stats
 
     def generate(min, max, count, depth, percent_text: 0, destination_path: nil, &block)
       min = BetterBytes.dehumanize(min)

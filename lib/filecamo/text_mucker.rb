@@ -2,6 +2,8 @@ require 'logger'
 require 'filemagic'
 require 'literate_randomizer'
 
+# TODO: add option to change existing markers instead (or in addition to?) adding lines
+
 module Filecamo
   class TextMucker
     MAX_FILE_SIZE = 128 * 1024
@@ -15,20 +17,16 @@ module Filecamo
       plain: '#',
     }
 
-    # todo: fix parsable types, somethign like the following
-    # (figure out how to insert, perhaps deep iterater and counters?)
-    # (figure out types to insert, (i.e. would be bad to insert string into number array))
-    LANG_PARSERS = {
-      json: ->(fn){}
-    }
-
     def initialize(comment_prefix, logger: Logger.new($stdout))
       @marks = LANG_MARKS.clone
       @marks.each_value{|m| m << comment_prefix}
       @logger = logger
       @magic = FileMagic.new
       @mime = FileMagic.mime
+      @stats = {files_selected: 0, lines_added: 0}
     end
+
+    attr_reader :stats
 
     def muck(percent_select, percent_lines, paths)
       select_chance = percent_select.to_f / 100
@@ -82,6 +80,8 @@ module Filecamo
           next
         end
 
+        @stats[:files_selected] += 1
+
         new_lines = {}
         new_bytes_needed = (fn_size * lines_chance).floor
         while new_bytes_needed > 0
@@ -91,6 +91,7 @@ module Filecamo
           new_bytes_needed -= new_line.bytesize
         end
         new_lines = new_lines.sort
+        @stats[:lines_added] += new_lines.size
 
         body = ''
         line_nums = []
