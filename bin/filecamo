@@ -3,7 +3,7 @@
 require_relative '../lib/filecamo'
 
 BN = File.basename($0, '.rb')
-usage = "usage: ${BN} [--debug]"
+usage = "usage: #{BN} [--debug]"
 
 logger = Logger.new($stdout)
 logger.level = ARGV.delete('--debug') ? Logger::DEBUG : Logger::INFO

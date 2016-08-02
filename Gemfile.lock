@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    filecamo (0.0.1)
+    filecamo (0.0.3)
       better_bytes (~> 0.0.1)
       literate_randomizer (~> 0.4.0)
       ruby-filemagic (~> 0.7.1)
